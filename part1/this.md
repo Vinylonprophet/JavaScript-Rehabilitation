@@ -39,7 +39,7 @@
        console.log(this.a)
    }
    
-   bar();
+   foo();
    ```
 
 5. this的绑定和函数声明位置的关系是？

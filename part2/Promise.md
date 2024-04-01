@@ -311,3 +311,108 @@
     ```
 
     
+
+19. Promise.all([..])是做什么的？
+
+    在Promise.all中，不管什么顺序，只有[..]中的所有的Promise执行完毕，才执行then中的方法。
+
+    
+
+20. Promise.race([..])是做什么的？
+
+    第一个完成的Promise，则抛弃其他的，无论是否是成功的还是失败的。
+
+    
+
+21. 说说下列几个变体模式的作用
+
+    - none([..])
+      - `Promise.none()` 返回一个新的 Promise，该 Promise 在给定的所有 Promise 都拒绝后解决，而不是等待所有 Promise 都解决。
+      - 如果传递给 `Promise.none()` 的所有 Promise 都被拒绝，则返回的 Promise 将解决为一个空数组。
+      - 如果传递给 `Promise.none()` 的任何一个 Promise 被解决（无论是解决还是拒绝），返回的 Promise 将被拒绝，并且拒绝原因是一个数组，其中包含所有拒绝的原因。
+    - any([..])
+      - 和all([..])类似，但是会忽略拒绝，只需要完成一个而不是全部。
+    - first([..])
+      - 类似于与any([..])竞争，只需要第一个Promise完成，忽略后续的任何拒绝与完成。
+    - last([..])
+      - 类似于first([..])，但是只有最后一个完成胜出。
+
+    **总结：**
+
+    | 方法              | 描述                                                         | 行为                                                         |
+    | ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+    | `Promise.none()`  | 返回一个新的 Promise，该 Promise 在给定的所有 Promise 都拒绝后解决，或者在所有 Promise 都被拒绝时被拒绝。 | 如果所有 Promise 都被拒绝，则返回的 Promise 将解决为一个空数组；如果任何一个 Promise 被解决，则返回的 Promise 将被拒绝，并且拒绝原因是一个数组，其中包含所有拒绝的原因。 |
+    | `Promise.all()`   | 返回一个新的 Promise，该 Promise 在给定的所有 Promise 都解决后解决，或者在任何一个 Promise 被拒绝时被拒绝。 | 如果所有 Promise 都解决，则返回的 Promise 将解决为一个数组，其中包含所有 Promise 解决时的值，按照传递的 Promise 数组的顺序排列；如果任何一个 Promise 被拒绝，则返回的 Promise 将被拒绝，并且拒绝原因是第一个被拒绝的 Promise 的拒绝原因。 |
+    | `Promise.any()`   | 返回一个新的 Promise，该 Promise 在给定的一组 Promise 中有一个解决时解决，或者在所有 Promise 都被拒绝时被拒绝。 | 如果任何一个 Promise 被解决，返回的 Promise 将解决，并且其解决值将是第一个解决的 Promise 的解决值；如果所有 Promise 都被拒绝，则返回的 Promise 将被拒绝，并且其拒绝原因将是一个数组，其中包含所有 Promise 的拒绝原因。 |
+    | `Promise.first()` | 返回一个新的 Promise，该 Promise 在给定的一组 Promise 中的第一个解决时解决，或者在所有 Promise 都被拒绝时被拒绝。 | 如果第一个解决的 Promise 被解决，则返回的 Promise 将解决，并且其解决值将是第一个解决的 Promise 的解决值；如果所有 Promise 都被拒绝，则返回的 Promise 将被拒绝，并且其拒绝原因将是一个数组，其中包含所有 Promise 的拒绝原因。 |
+    | `Promise.last()`  | 返回一个新的 Promise，该 Promise 在给定的一组 Promise 中的最后一个解决时解决，或者在所有 Promise 都被拒绝时被拒绝。 | 如果最后一个解决的 Promise 被解决，则返回的 Promise 将解决，并且其解决值将是最后一个解决的 Promise 的解决值；如果所有 Promise 都被拒绝，则返回的 Promise 将被拒绝，并且其拒绝原因将是一个数组，其中包含所有 Promise 的拒绝原因。 |
+    | `Promise.race()`  | 返回一个新的 Promise，该 Promise 在给定的一组 Promise 中的任何一个解决（或拒绝）时解决（或拒绝）。 | 返回的 Promise 将解决为首先解决的 Promise 的状态，或者如果首先拒绝的 Promise，则拒绝为首先拒绝的 Promise 的原因。 |
+
+    
+
+22. 下列代码的等价形式是什么？
+
+    ```javascript
+    var p1 = new Promise(function(resolve, reject){
+        resolve("Oops");
+    })
+    ```
+
+    p1.resovle("Oops");
+
+    
+
+23. 下列代码的结果是什么？
+
+    ```javascript
+    var p1 = Promise.resolve(42);
+    var p2 = Promise.resolve("Hello World");
+    var p3 = Promise.reject("Oops!");
+    
+    Promise.race([p1, p2, p3])
+    .then(function(msg){
+        console.log(msg);
+    })
+    
+    Promise.all([p1, p2, p3])
+    .then(function(msg){
+        console.log(msg);
+    })
+    .catch(function(error){
+        console.log(error);
+    })
+    
+    Promise.all([p1, p2])
+    .then(function(msg){
+        console.log(msg);
+    })
+    .catch(function(error){
+        console.log(error);
+    })
+    ```
+
+    42
+
+    Oops!
+
+    [42, 'Hello World']
+
+    
+
+24. 下列代码结果是什么？
+
+    ```javascript
+    Promise.all(
+    	foo(10, 20)
+    )
+    .then(function([x, y]){
+        console.log(x);
+        console.log(y);
+    })
+    ```
+
+    10
+
+    20
+
+    此处使用了解构
